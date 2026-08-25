@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="buildabo">
+  <rect width="64" height="64" fill="#FFFFFF"/>
+  <g transform="translate(5.4,10.2) scale(0.184)">
+    <path d="M8 138 L144.5 8 L281 138" fill="none" stroke="#AB5830" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#AB5830" d="M63 202V175a30 30 0 0 1 60 0V202H63z"/>
+    <path fill="#AB5830" d="M158 223V177a34 34 0 0 1 68 0V223H158z"/>
+  </g>
+</svg>
