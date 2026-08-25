@@ -1,5 +1,5 @@
 (function () {
-  const SITE = "https://buildabo.in/";
+  const SITE = "https://tiny-cucurucho-17c5bd.netlify.app/";
   const MAP =
     "https://www.google.com/maps/search/?api=1&query=3rd+Floor+244+Kallumantapa+Horamavu+Bengaluru+560113";
   const MENU_ICON =

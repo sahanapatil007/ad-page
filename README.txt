@@ -5,6 +5,6 @@ This folder is a standalone copy of the ad page. Zip it and send it, or upload t
 
 Open index.html — that is the landing page.
 
-Nav, portfolio, and project links go to https://buildabo.in/ so they still work when this folder is hosted on its own. The enquiry form still emails info@buildabo.in.
+Nav, portfolio, and project links go to https://tiny-cucurucho-17c5bd.netlify.app/ so they still work when this folder is hosted on its own. The enquiry form still emails info@buildabo.in.
 
 Needs internet for fonts (Google), Tailwind, GSAP, Lenis, and Swiper CDNs.
