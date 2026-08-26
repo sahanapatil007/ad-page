@@ -305,11 +305,12 @@
           <p class="ad-kicker">Start here</p>
           <h2>Let's Build Your Dream Home</h2>
           <p>Tell us what you're planning. Our team will get in touch to understand your requirements.</p>
-          <form class="contact-form" action="https://formsubmit.co/ajax/info@buildabo.in" method="POST">
-          <input type="hidden" name="_subject" value="New ad-page enquiry from buildabo.in" />
-          <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="text" name="_honey" class="contact-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <form class="contact-form" name="enquiry" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="enquiry" />
+          <input type="hidden" name="subject" value="New ad-page enquiry from buildabo.in" />
+          <p class="contact-honeypot" aria-hidden="true">
+            <label>Leave blank <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
           <div class="contact-form-row">
             <div class="contact-field">
               <label for="ad-name">Name</label>
@@ -369,7 +370,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="js/chrome.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/chrome.js?v=netlify1"></script>
+  <script src="js/main.js?v=formmail1"></script>
 </body>
 </html>

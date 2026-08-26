@@ -241,33 +241,59 @@ document.addEventListener("DOMContentLoaded", () => {
       const name = String(data.get("name") || "").trim();
       const email = String(data.get("email") || "").trim();
       const phone = String(data.get("phone") || "").trim();
-      data.set("_subject", `${isPopup ? "Popup enquiry from" : "Ad landing enquiry from"} ${name || "the website"}`);
-      if (email) data.set("_replyto", email);
-
-      const payload = {};
-      data.forEach((value, key) => {
-        if (key === "_honey" && !String(value).trim()) return;
-        payload[key] = String(value);
-      });
+      data.set("form-name", "enquiry");
+      data.set("subject", `${isPopup ? "Popup enquiry from" : "Ad landing enquiry from"} ${name || "the website"}`);
+      ["_subject", "_replyto", "_template", "_captcha", "_honey"].forEach((key) => data.delete(key));
 
       if (submit) submit.disabled = true;
       setStatus("Sending your enquiry…", false);
 
       try {
-        const response = await fetch("https://formsubmit.co/ajax/info@buildabo.in", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || result.success === "false" || result.success === false) {
-          throw new Error(result.message || "Could not send");
+        const body = new URLSearchParams(data).toString();
+        const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+        let sent = false;
+        let needsActivation = false;
+
+        try {
+          const phpRes = await fetch("send-enquiry.php", { method: "POST", headers, body });
+          if (phpRes.ok) {
+            const result = await phpRes.json().catch(() => ({}));
+            sent = result.success === true;
+          }
+        } catch (err) {}
+
+        if (!sent) {
+          try {
+            const netlifyRes = await fetch("/", { method: "POST", headers, body });
+            sent = netlifyRes.ok;
+          } catch (err) {}
         }
+
+        if (!sent) {
+          const fsRes = await fetch("https://formsubmit.co/ajax/info@buildabo.in", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              name,
+              phone,
+              email,
+              "Project type": String(data.get("interest") || ""),
+              Budget: String(data.get("budget") || ""),
+              Location: String(data.get("location") || ""),
+              message: String(data.get("message") || ""),
+              _subject: String(data.get("subject") || `Project enquiry from ${name}`),
+              _template: "table",
+              _captcha: "false",
+            }),
+          });
+          const fsResult = await fsRes.json().catch(() => ({}));
+          if (fsResult.success === true || fsResult.success === "true") sent = true;
+          else needsActivation = /activ/i.test(String(fsResult.message || ""));
+        }
+
+        if (!sent) throw new Error(needsActivation ? "ACTIVATE" : "Could not send");
         form.reset();
-        setStatus("Thanks. Your enquiry has been sent to info@buildabo.in. We’ll reply within 24 hours.", false);
+        setStatus("Thanks. Your enquiry has been sent. We’ll reply within 24 hours.", false);
         if (isPopup) {
           sessionStorage.setItem("buildabo-lead-dismissed", "1");
           window.setTimeout(() => closeLeadPopup(true), 1400);
@@ -276,13 +302,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const waText = encodeURIComponent(
           `Hi buildabo, I'm ${name || "a website visitor"}. ${phone ? "Phone: " + phone + ". " : ""}${email ? "Email: " + email + ". " : ""}I'd like to talk about a project.`
         );
-        setStatus(
-          'We couldn’t send that just now. Email <a href="mailto:info@buildabo.in">info@buildabo.in</a>, WhatsApp <a href="https://wa.me/919663635559?text=' +
-            waText +
-            '">9663635559</a>, or call <a href="tel:+919663635559">9663635559</a>.',
-          true,
-          true
-        );
+        const fallback =
+          'Email <a href="mailto:info@buildabo.in">info@buildabo.in</a>, WhatsApp <a href="https://wa.me/919663635559?text=' +
+          waText +
+          '">9663635559</a>, or call <a href="tel:+919663635559">9663635559</a>.';
+        if (err && err.message === "ACTIVATE") {
+          setStatus(
+            "Open the inbox for <a href=\"mailto:info@buildabo.in\">info@buildabo.in</a> and click FormSubmit’s <strong>Activate Form</strong> link (check spam). Then submit this form again. Until then, " +
+              fallback,
+            true,
+            true
+          );
+        } else {
+          setStatus("We couldn’t send that just now. " + fallback, true, true);
+        }
       } finally {
         if (submit) submit.disabled = false;
       }

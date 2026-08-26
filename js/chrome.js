@@ -216,11 +216,10 @@
       '<p class="lead-popup-kicker">Free consultation</p>' +
       '<h2 id="lead-popup-title">Tell us about your project</h2>' +
       "<p class=\"lead-popup-copy\">Share a few details and we’ll get back within 24 hours.</p>" +
-      '<form class="contact-form" action="https://formsubmit.co/ajax/info@buildabo.in" method="POST">' +
-      '<input type="hidden" name="_subject" value="New popup enquiry from buildabo.in" />' +
-      '<input type="hidden" name="_template" value="table" />' +
-      '<input type="hidden" name="_captcha" value="false" />' +
-      '<input type="text" name="_honey" class="contact-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />' +
+      '<form class="contact-form" name="enquiry" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">' +
+      '<input type="hidden" name="form-name" value="enquiry" />' +
+      '<input type="hidden" name="subject" value="New popup enquiry from buildabo.in" />' +
+      '<p class="contact-honeypot" aria-hidden="true"><label>Leave blank <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>' +
       '<div class="contact-form-row">' +
       '<div class="contact-field"><label for="popup-name">Name</label><input id="popup-name" type="text" name="name" required maxlength="120" /></div>' +
       '<div class="contact-field"><label for="popup-phone">Phone</label><input id="popup-phone" type="tel" name="phone" required maxlength="20" /></div>' +
