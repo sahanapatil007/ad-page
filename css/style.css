@@ -944,7 +944,7 @@ body.lead-open { overflow: hidden; }
 .stats-left {
   flex: 1 1 58%;
   min-width: 0;
-  background: center / cover no-repeat url("../assets/stats-bg.webp?v=pdf1");
+  background: center / cover no-repeat url("../assets/stats-bg.webp?v=theme1");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1505,8 +1505,11 @@ body.lead-open { overflow: hidden; }
 
 /* Testimonials */
 .clients-section {
-  padding: 120px 0 24px;
+  padding: 120px 0 100px;
   overflow: hidden;
+}
+.clients-section .review-video-swiper {
+  margin-top: 80px;
 }
 .testimonial-swiper {
   overflow: hidden;
@@ -1551,14 +1554,10 @@ body.lead-open { overflow: hidden; }
 }
 @media (max-width: 1199px) {
   .clients-section { padding: 100px 0; }
-  .testimonial-swiper { margin-top: 48px; }
-  .review { font-size: 22px; }
+  .clients-section .review-video-swiper { margin-top: 48px; }
 }
 @media (max-width: 767px) {
   .clients-section { padding: 70px 0; }
-  .testimonial-card { padding: 28px 22px; }
-  .testimonial-initials { width: 64px; height: 64px; font-size: 16px; }
-  .review { font-size: 18px; }
 }
 
 /* Team */
@@ -3127,10 +3126,10 @@ body.lead-open { overflow: hidden; }
 .ad-vision-done:hover img { transform: scale(1.03); }
 
 .ad-quotes {
-  padding: 20px 0 24px;
+  padding: 80px 0 100px;
   overflow: hidden;
 }
-.ad-quotes .testimonial-swiper {
+.ad-quotes .review-video-swiper {
   margin-top: 40px;
 }
 
@@ -3294,8 +3293,7 @@ body.lead-open { overflow: hidden; }
   .ad-process,
   .ad-vision,
   .ad-quotes,
-  .ad-area,
-  .review-videos { padding-top: 64px; padding-bottom: 64px; }
+  .ad-area { padding-top: 64px; padding-bottom: 64px; }
   .ad-project-grid { grid-template-columns: 1fr; }
   .ad-project,
   .ad-project-lg { min-height: 300px; }
@@ -3324,6 +3322,20 @@ body.lead-open { overflow: hidden; }
 }
 .review-video-card {
   cursor: pointer;
+}
+.review-video-caption {
+  margin-top: 16px;
+}
+.review-video-who {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-medium);
+  color: var(--heading);
+  font-size: 16px;
+}
+.review-video-where {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--concrete);
 }
 .review-video-frame {
   position: relative;
@@ -3375,8 +3387,9 @@ body.lead-open { overflow: hidden; }
   opacity: 0;
   pointer-events: none;
 }
-.ad-page .review-videos {
-  padding: 20px 0 72px;
+.clients-section .review-video-swiper,
+.ad-quotes .review-video-swiper {
+  overflow: hidden;
 }
 
 /* WhatsApp + lead popup */
@@ -3470,7 +3483,8 @@ body.lead-open { overflow: hidden; }
   background: transparent;
 }
 @media (max-width: 767px) {
-  .review-videos { padding: 16px 0 56px; }
+  .clients-section .review-video-swiper,
+  .ad-quotes .review-video-swiper { margin-top: 36px; }
   .review-video-swiper .swiper-slide { width: min(540px, 84vw); }
   .lead-popup { padding: 16px; }
   .lead-popup-panel { padding: 36px 20px 22px; }

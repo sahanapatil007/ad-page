@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Escape" && leadPopup.classList.contains("is-open")) closeLeadPopup(true);
     });
     if (sessionStorage.getItem("buildabo-lead-dismissed") !== "1") {
-      window.setTimeout(openLeadPopup, 30000);
+      window.setTimeout(openLeadPopup, 10000);
     }
   }
 
