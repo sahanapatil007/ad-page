@@ -64,10 +64,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const reviewEl = document.querySelector(".review-video-swiper");
-  let reviewSwiper = null;
-  if (reviewEl) {
-    const wrapper = reviewEl.querySelector(".swiper-wrapper");
+  const reviewSwipers = [];
+  const ytWarmup = document.createElement("div");
+  ytWarmup.id = "yt-warmup";
+  ytWarmup.hidden = true;
+  ytWarmup.setAttribute("aria-hidden", "true");
+  document.body.appendChild(ytWarmup);
+  const ytPlayers = new Map();
+  const ytEmbed = (id) =>
+    `https://www.youtube.com/embed/${id}?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&autoplay=0&origin=${encodeURIComponent(window.location.origin)}`;
+  const ytCommand = (iframe, func) => {
+    iframe.contentWindow?.postMessage(JSON.stringify({ event: "command", func, args: [] }), "*");
+  };
+  const getYtIframe = (id) => {
+    if (ytPlayers.has(id)) return ytPlayers.get(id);
+    const iframe = document.createElement("iframe");
+    iframe.src = ytEmbed(id);
+    iframe.title = "YouTube review";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.setAttribute("allowfullscreen", "");
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.dataset.ytReady = "0";
+    iframe.addEventListener("load", () => {
+      iframe.dataset.ytReady = "1";
+    }, { once: true });
+    ytWarmup.appendChild(iframe);
+    ytPlayers.set(id, iframe);
+    return iframe;
+  };
+  [...new Set(
+    [...document.querySelectorAll(".review-video-card[data-yt]")].map((card) => card.dataset.yt).filter(Boolean)
+  )].forEach((id) => getYtIframe(id));
+  const stopReviewVideos = () => {
+    document.querySelectorAll(".review-video-card video").forEach((video) => video.pause());
+    document.querySelectorAll(".review-video-card[data-yt]").forEach((card) => {
+      card.classList.remove("is-playing", "is-loading");
+    });
+    ytPlayers.forEach((iframe) => {
+      ytCommand(iframe, "pauseVideo");
+      ytWarmup.appendChild(iframe);
+    });
+  };
+  const anyReviewPlaying = () =>
+    [...document.querySelectorAll(".review-video-card video")].some((v) => !v.paused) ||
+    !!document.querySelector(".review-video-card.is-playing iframe");
+  document.querySelectorAll(".review-video-swiper, .ig-reel-swiper").forEach((el) => {
+    const wrapper = el.querySelector(".swiper-wrapper");
+    if (!wrapper) return;
     const originals = [...wrapper.querySelectorAll(".swiper-slide")];
     for (let i = 0; i < 5; i += 1) {
       originals.forEach((slide) => {
@@ -76,12 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
         wrapper.appendChild(clone);
       });
     }
-    reviewSwiper = new Swiper(reviewEl, {
-        slidesPerView: "auto",
-        spaceBetween: 28,
-        loop: true,
+    const isIg = el.classList.contains("ig-reel-swiper");
+    const swiper = new Swiper(el, {
+      slidesPerView: 1,
+      spaceBetween: isIg ? 28 : 16,
+      loop: true,
       loopAdditionalSlides: 8,
-      speed: 7000,
+      speed: isIg ? 6500 : 7000,
       grabCursor: true,
       allowTouchMove: true,
       watchOverflow: false,
@@ -94,18 +138,53 @@ document.addEventListener("DOMContentLoaded", () => {
         enabled: true,
         momentum: false,
       },
+      breakpoints: {
+        768: { slidesPerView: 2, spaceBetween: isIg ? 40 : 24 },
+        1025: { slidesPerView: 2, spaceBetween: isIg ? 56 : 40 },
+      },
     });
-    reviewSwiper.autoplay?.start();
-  }
+    swiper.autoplay?.start();
+    reviewSwipers.push(swiper);
+  });
+  const pauseReviewCarousels = () => reviewSwipers.forEach((s) => s.autoplay?.stop());
+  const resumeReviewCarousels = () => {
+    if (!anyReviewPlaying()) reviewSwipers.forEach((s) => s.autoplay?.start());
+  };
 
   document.querySelectorAll(".review-video-card").forEach((card) => {
+    const ytId = card.dataset.yt;
+    if (ytId) {
+      card.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (card.classList.contains("is-playing") && card.querySelector("iframe")) return;
+        stopReviewVideos();
+        const frame = card.querySelector(".review-video-frame");
+        if (!frame) return;
+        const iframe = getYtIframe(ytId);
+        iframe.title = card.querySelector(".review-video-who")?.textContent?.trim() || "YouTube review";
+        frame.appendChild(iframe);
+        card.classList.add("is-playing");
+        const playNow = () => {
+          ytCommand(iframe, "playVideo");
+          card.classList.remove("is-loading");
+        };
+        if (iframe.dataset.ytReady === "1") {
+          playNow();
+        } else {
+          card.classList.add("is-loading");
+          iframe.addEventListener("load", playNow, { once: true });
+        }
+        window.setTimeout(playNow, 200);
+        window.setTimeout(playNow, 700);
+        pauseReviewCarousels();
+      });
+      return;
+    }
     const video = card.querySelector("video");
     if (!video) return;
     const toggle = () => {
       if (video.paused) {
-        document.querySelectorAll(".review-video-card video").forEach((other) => {
-          if (other !== video) other.pause();
-        });
+        stopReviewVideos();
         video.play().catch(() => {});
       } else {
         video.pause();
@@ -117,16 +196,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     video.addEventListener("play", () => {
       card.classList.add("is-playing");
-      reviewSwiper?.autoplay?.stop();
+      pauseReviewCarousels();
     });
     video.addEventListener("pause", () => {
       card.classList.remove("is-playing");
-      const anyPlaying = [...document.querySelectorAll(".review-video-card video")].some((v) => !v.paused);
-      if (!anyPlaying) reviewSwiper?.autoplay?.start();
+      resumeReviewCarousels();
     });
     video.addEventListener("ended", () => {
       card.classList.remove("is-playing");
-      reviewSwiper?.autoplay?.start();
+      resumeReviewCarousels();
     });
   });
 
@@ -195,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const openLeadPopup = () => {
     if (!leadPopup || sessionStorage.getItem("buildabo-lead-dismissed") === "1") return;
     if (mobileMenu && mobileMenu.classList.contains("is-open")) closeMenu();
-    document.querySelectorAll(".review-video-card video").forEach((video) => video.pause());
+    stopReviewVideos();
     leadPopup.classList.add("is-open");
     leadPopup.setAttribute("aria-hidden", "false");
     document.body.classList.add("lead-open");

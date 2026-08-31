@@ -1435,14 +1435,14 @@ body.lead-open { overflow: hidden; }
 
 /* Process */
 .process-wrap {
-  background: var(--sandstone) url("../assets/process-bg-l.png") left bottom / auto no-repeat;
+  background: var(--sandstone) url("../assets/process-bg-l.webp") left bottom / auto no-repeat;
   position: relative;
 }
 .process-wrap::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("../assets/process-bg-r.png") right bottom / auto no-repeat;
+  background: url("../assets/process-bg-r.webp") right bottom / auto no-repeat;
   pointer-events: none;
 }
 .process-cards {
@@ -1505,11 +1505,24 @@ body.lead-open { overflow: hidden; }
 
 /* Testimonials */
 .clients-section {
-  padding: 120px 0 100px;
+  padding: 120px 0 32px;
   overflow: hidden;
 }
-.clients-section .review-video-swiper {
-  margin-top: 80px;
+.reviews-heading {
+  margin-top: 16px;
+  max-width: 760px;
+  font-size: clamp(22px, 4vw, 40px);
+  font-weight: var(--weight-black);
+  line-height: 1.25;
+  color: var(--heading);
+}
+.social-presence-section {
+  padding: 48px 0 110px;
+  overflow: hidden;
+}
+.clients-section .review-video-swiper,
+.social-presence-section .ig-feed-embed {
+  margin-top: 56px;
 }
 .testimonial-swiper {
   overflow: hidden;
@@ -1553,11 +1566,14 @@ body.lead-open { overflow: hidden; }
   letter-spacing: .04em;
 }
 @media (max-width: 1199px) {
-  .clients-section { padding: 100px 0; }
-  .clients-section .review-video-swiper { margin-top: 48px; }
+  .clients-section { padding: 100px 0 24px; }
+  .social-presence-section { padding: 32px 0 90px; }
+  .clients-section .review-video-swiper,
+  .social-presence-section .ig-feed-embed { margin-top: 40px; }
 }
 @media (max-width: 767px) {
-  .clients-section { padding: 70px 0; }
+  .clients-section { padding: 70px 0 16px; }
+  .social-presence-section { padding: 24px 0 72px; }
 }
 
 /* Team */
@@ -3126,11 +3142,19 @@ body.lead-open { overflow: hidden; }
 .ad-vision-done:hover img { transform: scale(1.03); }
 
 .ad-quotes {
-  padding: 80px 0 100px;
+  padding: 80px 0 24px;
   overflow: hidden;
 }
-.ad-quotes .review-video-swiper {
+@media (max-width: 767px) {
+  .ad-quotes { padding: 64px 0 16px; }
+}
+.ad-quotes .review-video-swiper,
+.social-presence-section .ig-feed-embed {
   margin-top: 40px;
+}
+.ig-feed-embed {
+  width: 100%;
+  min-height: 120px;
 }
 
 .ad-area {
@@ -3292,7 +3316,6 @@ body.lead-open { overflow: hidden; }
   .ad-projects,
   .ad-process,
   .ad-vision,
-  .ad-quotes,
   .ad-area { padding-top: 64px; padding-bottom: 64px; }
   .ad-project-grid { grid-template-columns: 1fr; }
   .ad-project,
@@ -3308,6 +3331,7 @@ body.lead-open { overflow: hidden; }
 }
 .review-video-swiper {
   overflow: hidden;
+  padding: 0 20px;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
@@ -3316,9 +3340,7 @@ body.lead-open { overflow: hidden; }
   align-items: stretch;
 }
 .review-video-swiper .swiper-slide {
-  width: min(540px, 84vw);
   height: auto;
-  flex-shrink: 0;
 }
 .review-video-card {
   cursor: pointer;
@@ -3345,8 +3367,46 @@ body.lead-open { overflow: hidden; }
   border-radius: 0;
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
 }
+.yt-frame,
+.ig-frame {
+  width: 100%;
+  height: 300px;
+  aspect-ratio: auto;
+  border-radius: 14px;
+}
+.review-platform {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 3;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, .5);
+  padding: 5px 8px;
+  pointer-events: none;
+}
+.ig-reel-swiper {
+  overflow: hidden;
+  padding: 0 20px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.ig-reel-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+  align-items: stretch;
+}
+.ig-reel-swiper .swiper-slide {
+  height: auto;
+}
+@media (min-width: 1025px) {
+  .review-video-swiper,
+  .ig-reel-swiper { padding: 0 56px; }
+}
 .review-video-still,
-.review-video-frame video {
+.review-video-frame video,
+.review-video-frame iframe {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -3355,6 +3415,11 @@ body.lead-open { overflow: hidden; }
   display: block;
 }
 .review-video-frame video { z-index: 1; }
+.review-video-frame iframe {
+  z-index: 4;
+  border: 0;
+  object-fit: unset;
+}
 .review-video-play {
   position: absolute;
   inset: 0;
@@ -3367,8 +3432,8 @@ body.lead-open { overflow: hidden; }
   color: #fff;
 }
 .review-video-play span {
-  width: 58px;
-  height: 58px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -3382,10 +3447,32 @@ body.lead-open { overflow: hidden; }
   transform: scale(1.06);
   background: rgba(255, 255, 255, .32);
 }
-.review-video-play svg { width: 22px; height: 22px; margin-left: 2px; }
-.review-video-card.is-playing .review-video-play {
+.yt-play span {
+  width: 54px;
+  height: 38px;
+  border-radius: 10px;
+  background: #ff0000;
+  border: 0;
+  backdrop-filter: none;
+}
+.yt-play:hover span,
+.review-video-card:hover .yt-play span {
+  background: #e00000;
+}
+.review-video-play svg { width: 16px; height: 16px; margin-left: 2px; }
+.review-video-card.is-playing:not(.is-loading) .review-video-play {
   opacity: 0;
   pointer-events: none;
+}
+.review-video-card.is-loading .review-video-play {
+  opacity: 1;
+  pointer-events: none;
+}
+.review-video-card.is-loading .yt-play span {
+  animation: yt-wait .7s ease infinite;
+}
+@keyframes yt-wait {
+  50% { transform: scale(.9); opacity: .65; }
 }
 .clients-section .review-video-swiper,
 .ad-quotes .review-video-swiper {
@@ -3485,7 +3572,8 @@ body.lead-open { overflow: hidden; }
 @media (max-width: 767px) {
   .clients-section .review-video-swiper,
   .ad-quotes .review-video-swiper { margin-top: 36px; }
-  .review-video-swiper .swiper-slide { width: min(540px, 84vw); }
+  .yt-frame,
+  .ig-frame { height: 230px; }
   .lead-popup { padding: 16px; }
   .lead-popup-panel { padding: 36px 20px 22px; }
 }
